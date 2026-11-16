@@ -6,10 +6,11 @@ import {UNITS} from '../content/units.js';
 import {UNIT4} from '../content/unit4.js';
 import {GRADES} from '../content/dictation.js';
 import * as lesson from './screens/lesson.js';
+import * as dictation from './screens/dictation.js';
 
 const q = new URLSearchParams(location.search);
 export const params = {day: q.get('day'), seed: q.get('seed'), screen: q.get('screen'), arg: q.get('arg'), audit: q.has('audit')};
-const SCREENS = {lesson};
+const SCREENS = {lesson, dictation};
 export function registerScreen(id, mod){ SCREENS[id] = mod; }
 
 const WEEK = '일월화수목금토';
