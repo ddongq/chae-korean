@@ -64,3 +64,10 @@ export function showScreen(id, arg){
   if (m) m.mount(root, ctxRef, arg);
 }
 export const currentScreen = () => current;
+
+// 받침에 따라 조사 고르기: josa('찻상', '이', '가') → '찻상이'
+export function josa(word, withB, withoutB){
+  const c = word.charCodeAt(word.length - 1);
+  const has = c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0;
+  return word + (has ? withB : withoutB);
+}

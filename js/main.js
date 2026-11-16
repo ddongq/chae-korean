@@ -9,13 +9,15 @@ import * as lesson from './screens/lesson.js';
 import * as dictation from './screens/dictation.js';
 import * as home from './screens/home.js';
 import * as map from './screens/map.js';
+import * as wrap from './screens/wrap.js';
+import * as recall from './screens/recall.js';
 import {openStore as _o, memoryBackend} from './store.js';
 import {releaseQueued} from './rewards.js';
 import {seedDemo} from './seed.js';
 
 const q = new URLSearchParams(location.search);
 export const params = {day: q.get('day'), seed: q.get('seed'), screen: q.get('screen'), arg: q.get('arg'), audit: q.has('audit')};
-const SCREENS = {lesson, dictation, home, map};
+const SCREENS = {lesson, dictation, home, map, wrap, recall};
 export function registerScreen(id, mod){ SCREENS[id] = mod; }
 
 const WEEK = '일월화수목금토';
