@@ -2,7 +2,7 @@
 import {h, say, later} from '../ui.js';
 import {speak} from '../speech.js';
 import {finishLesson, addReview, addStamp, markActive, stepSig} from '../rewards.js';
-import {lessonById} from '../../content/unit4.js';
+import {lessonById, unitName} from '../../content/index.js';
 import * as choose from '../activities/choose.js';
 import * as fix from '../activities/fix.js';
 import * as sort from '../activities/sort.js';
@@ -16,7 +16,7 @@ export function mount(root, ctx, lessonId){
   const S = ctx.store.state;
   const panel = h('section', {class: 'panel act'});
   const dots = h('div', {class: 'prog'}, L.steps.map(() => h('i')));
-  root.append(h('div', {class: 'bar-sub'}, h('span', {class: 'k'}, `4단원 ${L.range}`), h('b', {}, L.title)), panel);
+  root.append(h('div', {class: 'bar-sub'}, h('span', {class: 'k'}, `${unitName(L.unit)} ${L.range}`), h('b', {}, L.title)), panel);
   let idx = 0;
   const speakSafe = async text => { const r = await speak(text); if (r !== 'ok') say('rupert_comfort', r === 'novoice' ? '목소리를 찾지 못했어요. 글을 <b>천천히 읽어</b> 볼까?' : '소리가 잘 안 나와요. 글을 <b>천천히 읽어</b> 볼까?'); };
 

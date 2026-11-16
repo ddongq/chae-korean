@@ -3,7 +3,7 @@ import {h, say, hideTalk} from '../ui.js';
 import {stamp, fixFutureDay} from '../rewards.js';
 import {speak} from '../speech.js';
 import {dayKey, isLater} from '../day.js';
-import {lessonById} from '../../content/unit4.js';
+import {lessonById, unitName} from '../../content/index.js';
 
 export async function hashPin(pin){
   const data = new TextEncoder().encode('chae-korean:' + pin);
@@ -45,14 +45,14 @@ async function dashboard(root, ctx){
     return h('li', {}, text, h('span', {class: 'muted'}, ` (${r.day}${r.misses ? `, 다시 틀림 ${r.misses}` : ''})`));
   });
   const readings = Object.entries(S.reading).sort().reverse().slice(0, 7).map(([d, r]) => h('li', {}, `${d} · ${r.minutes}분${r.recBlob ? ' · 녹음 있음' : ''}`));
-  const unitSel = h('select', {id: 'curUnit'}, ctx.content.units.map(u => h('option', {value: u.id, selected: u.id === S.currentUnit}, `${u.label} · ${u.title}${u.id === 'u4' ? '' : ' (준비 중)'}`)));
+  const unitSel = h('select', {id: 'curUnit'}, ctx.content.units.map(u => h('option', {value: u.id, selected: u.id === S.currentUnit}, `${u.label} · ${u.title}${ctx.content.byId[u.id] ? '' : ' (준비 중)'}`)));
   unitSel.onchange = async () => { S.currentUnit = unitSel.value; await ctx.save(); };
   const exportBtn = h('button', {class: 'btn'}, '백업 파일 저장');
   exportBtn.onclick = () => { const a = h('a', {href: URL.createObjectURL(new Blob([ctx.store.exportJSON()], {type: 'application/json'})), download: `가을책방-백업-${ctx.day}.json`}); document.body.append(a); a.click(); a.remove(); };
   const file = h('input', {type: 'file', accept: 'application/json', id: 'importFile'});
   const importMsg = h('span', {class: 'muted'});
   file.onchange = async () => { try { ctx.store.importJSON(await file.files[0].text()); await ctx.save(); importMsg.textContent = '불러왔어요.'; } catch (e){ importMsg.textContent = e.message || '불러오지 못했어요.'; } };
-  const done = U.lessons.filter(l => S.lessons[l.id]).length;
+  const progress = Object.values(ctx.content.byId).map(uc => `${unitName(uc.id)} ${uc.lessons.filter(l => S.lessons[l.id]).length}/${uc.lessons.length}묶음`).join(' · ');
   root.replaceChildren(
     h('div', {class: 'bar-sub'}, h('b', {}, '부모님')),
     h('section', {class: 'panel pcol pleft'},
@@ -60,7 +60,7 @@ async function dashboard(root, ctx){
       ctx.store.recovered ? h('p', {class: 'warn'}, '예전 기록의 모양이 달라 새로 시작했어요. 예전 기록은 기기 안에 따로 보관해 두었어요.') : null,
       S.lastDay && isLater(S.lastDay, dayKey(new Date())) ? h('p', {class: 'warn'}, `마지막 날짜(${S.lastDay})가 오늘보다 뒤예요. 기기 시계를 바꾼 적이 있나요? `,
         h('button', {class: 'btn', onclick: async () => { fixFutureDay(S, dayKey(new Date())); ctx.day = S.lastDay; await ctx.save(); dashboard(root, ctx); }}, '오늘로 맞추기')) : null,
-      h('h2', {}, '진행'), h('p', {}, `함께 책방을 연 날 ${S.days.length}일 · 4단원 ${done}/${U.lessons.length}묶음 · 받아쓰기 ${Object.keys(S.dictation).length}/${ctx.content.grades.length}급 · 고양이 ${S.pet.stage}단계(낱말 ${S.pet.words.length}개)`),
+      h('h2', {}, '진행'), h('p', {}, `함께 책방을 연 날 ${S.days.length}일 · ${progress} · 받아쓰기 ${Object.keys(S.dictation).length}/${ctx.content.grades.length}급 · 고양이 ${S.pet.stage}단계(낱말 ${S.pet.words.length}개)`),
       h('ul', {class: 'plist'}, U.lessons.map(l => h('li', {}, `${l.range} ${l.title}`, h('span', {class: 'muted'}, S.lessons[l.id] ? ` · ${S.lessons[l.id].day}` : ' · 아직')))),
       h('h2', {}, '다시 볼 것'), reviews.length ? h('ul', {class: 'plist'}, reviews) : h('p', {class: 'muted'}, '없어요.'),
       h('h2', {}, '소리 내어 읽기'), readings.length ? h('ul', {class: 'plist'}, readings) : h('p', {class: 'muted'}, '아직 없어요.')),

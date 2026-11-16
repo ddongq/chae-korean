@@ -7,7 +7,8 @@ export function todayTasks(state, day, content){
   if (wet.length) out.push({kind: 'dry', ref: wet});
   const due = dueReviews(state, day);
   if (due.length) out.push({kind: 'review', ref: due});
-  const grade = content.grades.find(g => !state.dictation[g.id]);
+  const mine = g => g.unit === content.unit.id ? 0 : 1;   // 지금 단원 급수 먼저
+  const grade = [...content.grades].sort((a, b) => mine(a) - mine(b)).find(g => !state.dictation[g.id]);
   if (grade) out.push({kind: 'dictation', ref: grade.id});
   const lesson = content.unit.lessons.find(l => !state.lessons[l.id]);
   if (lesson) out.push({kind: 'lesson', ref: lesson.id});

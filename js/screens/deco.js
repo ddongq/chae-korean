@@ -4,10 +4,10 @@ import {ASSETS, REF_W, REF_H} from '../assets.js';
 import {cellAt, cellCenter, place, move, remove, undo} from '../iso.js';
 import {shopView} from './home.js';
 import {itemPic} from './wrap.js';
-import {UNIT4} from '../../content/unit4.js';
+import {lessonByItem} from '../../content/index.js';
 
 const BOX = {x: 24, y: 88, w: 1060, h: 792};
-const nameOf = id => id === 'cat' ? '고양이' : UNIT4.lessons.find(l => l.reward.item === id)?.reward.itemName || id;
+const nameOf = id => id === 'cat' ? '고양이' : lessonByItem(id)?.reward.itemName || id;
 
 export function mount(root, ctx){
   const S = ctx.store.state, history = [];

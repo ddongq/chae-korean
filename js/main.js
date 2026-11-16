@@ -5,7 +5,7 @@ import {lockZoom} from './nozoom.js';
 import {openStore} from './store.js';
 import {dayKey, effectiveDay} from './day.js';
 import {UNITS} from '../content/units.js';
-import {UNIT4} from '../content/unit4.js';
+import {UNIT_CONTENT, activeUnit} from '../content/index.js';
 import {GRADES} from '../content/dictation.js';
 import * as lesson from './screens/lesson.js';
 import * as dictation from './screens/dictation.js';
@@ -41,7 +41,8 @@ async function boot(){
   if (releaseQueued(store.state, day).length) await store.save();
   const ctx = {
     store, day,
-    content: {units: UNITS, unit: UNIT4, grades: GRADES},
+    // unit = 지금 배울 단원(부모님이 정한 단원 → 교과서 순서), byId = 내용이 있는 단원들
+    content: {units: UNITS, byId: UNIT_CONTENT, grades: GRADES, get unit(){ return activeUnit(store.state); }},
     save: () => store.save(),
     go: (id, arg) => { refreshDay(); $('#btnHome').hidden = id === 'home'; ['btnDeco','btnWardrobe','btnWords','btnParent'].forEach(b => $('#' + b).hidden = id !== 'home'); showScreen(id, arg); },
   };

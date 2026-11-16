@@ -216,3 +216,5 @@ button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent
 .chip.pressing{background:#FFE08A}
 .chip.deco{background:var(--leaf);color:#fff;box-shadow:0 3px 0 #3C6230}
 .home-shop{cursor:pointer}
+button.unit{background:transparent;text-align:left;width:100%}
+.unit.locked{opacity:.55}

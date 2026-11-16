@@ -56,7 +56,7 @@ export async function layoutAudit(){
     issues.push(...check(id + (arg ? ' ' + JSON.stringify(arg).slice(0, 30) : '')));
   }
   const api = {check: () => 'retry', done(){}, say(){}, speak(){}, saveWriting: async () => {}};
-  for (const L of ctx.content.unit.lessons){
+  for (const L of Object.values(ctx.content.byId).flatMap(u => u.lessons)){
     for (const [i, step] of [...L.steps.entries(), [-1, L.reward.recall]]){
       ctx.go('lesson', L.id); await sleep(30);
       const body = document.querySelector('.act .body'); body.replaceChildren();

@@ -2,7 +2,7 @@
 import {h, say, josa, later} from '../ui.js';
 import {speak} from '../speech.js';
 import {dryItem, feed, reviewAnswered, wetToDry, dueReviews, markActive, resolveReviewStep} from '../rewards.js';
-import {lessonById, UNIT4} from '../../content/unit4.js';
+import {lessonById, lessonByItem} from '../../content/index.js';
 import {itemPic} from './wrap.js';
 import * as choose from '../activities/choose.js';
 import * as fix from '../activities/fix.js';
@@ -14,7 +14,7 @@ const KINDS = {choose, fix, evidence, talk, sort};
 export function mount(root, ctx){
   const S = ctx.store.state;
   const queue = [
-    ...wetToDry(S, ctx.day).map(id => ({type: 'dry', id, lesson: UNIT4.lessons.find(l => l.reward.item === id)})).filter(q => q.lesson),
+    ...wetToDry(S, ctx.day).map(id => ({type: 'dry', id, lesson: lessonByItem(id)})).filter(q => q.lesson),
     ...dueReviews(S, ctx.day).map(key => ({type: S.reviews[key].kind, key})),
   ];
   const panel = h('section', {class: 'panel act'});

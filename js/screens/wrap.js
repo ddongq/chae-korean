@@ -2,7 +2,7 @@
 import {h, say, dragFrom, josa, later} from '../ui.js';
 import {feed, finishUnit} from '../rewards.js';
 import {ASSETS} from '../assets.js';
-import {lessonById} from '../../content/unit4.js';
+import {lessonById} from '../../content/index.js';
 import {unitById} from '../../content/units.js';
 import {shopView} from './home.js';
 
@@ -42,7 +42,8 @@ export function bowlSVG(letters = []){
   </svg>`;
 }
 
-export function mount(root, ctx, arg = {}){
+export function mount(root, ctx, arg){
+  arg = arg || {};
   const S = ctx.store.state, L = lessonById(arg.lessonId) || ctx.content.unit.lessons[0], res = arg.res || {};
   const name = L.reward.itemName, words = L.reward.words;
   const left = h('section', {class: 'panel wrapL'});
@@ -88,7 +89,7 @@ export function mount(root, ctx, arg = {}){
 
   // 단원의 모든 차시를 마쳤으면 구역을 되살리고 축하 장면을 띄운다(한 번만). 띄웠으면 true.
   function after(){
-    const U = ctx.content.unit;
+    const U = ctx.content.byId[L.unit] || ctx.content.unit;   // 이 차시가 속한 단원
     if (celebrated || !U.lessons.every(l => S.lessons[l.id])) return false;
     const unit = unitById(U.id), out = finishUnit(S, unit, ctx.day);
     if (out.repeat) return false;

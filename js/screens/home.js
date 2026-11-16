@@ -6,12 +6,13 @@ import {todayTasks} from '../plan.js';
 import {releaseQueued, unitReady, finishUnit} from '../rewards.js';
 import {celebrateUnit} from './wrap.js';
 import {unitById} from '../../content/units.js';
+import {unitName} from '../../content/index.js';
 
 const TASK_TEXT = {
   dry: () => ['젖은 잉크 말리기', '어제 만난 낱말을 다시 떠올리면 소품이 책방에 놓여요', 'sky'],
   review: () => ['다시 만나기', '전에 헷갈린 문제를 다시 풀어요', 'sky'],
   dictation: (t, c) => [c.content.grades.find(g => g.id === t.ref).name + ' 받아쓰기', '듣고 원고지에 쓰기', 'berry'],
-  lesson: (t, c) => { const l = c.content.unit.lessons.find(x => x.id === t.ref); return [`4단원 ${l.range}`, l.title, 'leaf']; },
+  lesson: (t, c) => { const l = c.content.unit.lessons.find(x => x.id === t.ref); return [`${unitName(l.unit)} ${l.range}`, l.title, 'leaf']; },
   reading: () => ['소리 내어 읽기 10분', '오늘 읽은 책을 적고 고양이에게 들려줘요', 'brown'],
 };
 export const ROUTE = {dry: 'recall', review: 'recall', dictation: 'dictation', lesson: 'lesson', reading: 'reading'};
@@ -21,7 +22,8 @@ export function zoneMask(state, content){
   for (const u of content.units){
     const z = ASSETS.zones[u.id]; if (!z) continue;
     let k = state.units[u.id] ? 1 : 0;
-    if (!k && u.id === content.unit.id){ const ls = content.unit.lessons; k = ls.filter(l => state.lessons[l.id]).length / ls.length; }
+    const uc = content.byId?.[u.id];
+    if (!k && uc){ const ls = uc.lessons; k = ls.filter(l => state.lessons[l.id]).length / ls.length; }
     if (k <= 0) continue;
     const rx = (z.rx * (0.45 + 0.55 * k)) / REF_W * 100, ry = (z.ry * (0.45 + 0.55 * k)) / REF_H * 100;
     parts.push(`radial-gradient(ellipse ${rx.toFixed(1)}% ${ry.toFixed(1)}% at ${(z.x / REF_W * 100).toFixed(1)}% ${(z.y / REF_H * 100).toFixed(1)}%, #000 60%, transparent 100%)`);
@@ -66,7 +68,7 @@ export function mount(root, ctx){
   const shop = shopView(S, ctx.content, {w: 1000, h: 746});
   shop.classList.add('home-shop');
   shop.addEventListener('click', e => { if (!e.target.closest('.pbub')) ctx.go('deco'); });   // 책방 그림을 누르면 꾸미기
-  const unit = unitById(S.currentUnit);
+  const unit = unitById(ctx.content.unit.id);
   const catBub = h('div', {class: 'pbub'}, tasks[0]?.kind === 'dry' ? '어제 만든 소품, 잉크가 아직 젖어 있어. 같이 말리자!' : tasks.length ? '오늘도 와 줬구나!' : '오늘 책방 일 끝! 꾸미러 갈까?');
   shop.append(catBub);
   const cat = shop.querySelector('.cat');
@@ -86,7 +88,8 @@ export function mount(root, ctx){
     h('div', {class: 'days'}, '함께 책방을 연 날 ', h('b', {}, `${S.days.length}일`))));
   const zoneDone = !!S.units[unit.id];
   // 마무리 화면에서 단원 마침을 놓쳤으면(앱을 닫은 경우 등) 여기서 챙긴다
-  if (unitReady(S, ctx.content.unit)){ const u = unitById(ctx.content.unit.id), out = finishUnit(S, u, ctx.day); ctx.save(); celebrateUnit(root, ctx, u, out); return; }
+  const ready = Object.values(ctx.content.byId).find(uc => unitReady(S, uc));
+  if (ready){ const u = unitById(ready.id), out = finishUnit(S, u, ctx.day); ctx.save(); celebrateUnit(root, ctx, u, out); return; }
   say('rupert_hello', !tasks.length ? '오늘도 수고했어. <b>책방을 꾸며</b> 볼까?'
     : zoneDone ? `<b>${unit.zoneName}</b>에 색이 다 돌아왔어. 오늘은 복습하는 날이야.`
     : `왔구나, 채원아. <b>${unit.zoneName}</b> 쪽이 조금씩 색을 찾고 있어.`);
