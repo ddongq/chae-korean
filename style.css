@@ -159,3 +159,37 @@ button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent
 .readR{left:904px;top:88px;width:438px;height:742px;display:grid;place-items:end center;padding-bottom:40px;background:linear-gradient(#FFFCF4,#F3E7CC)}
 .listencat{height:340px;filter:drop-shadow(0 6px 4px rgba(90,60,30,.25))}.listencat.hop{animation:hop2 .5s ease 2}
 @keyframes hop2{50%{transform:translateY(-12%)}}
+/* 꾸미기 */
+.isogrid{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.tray{left:1100px;top:88px;width:242px;height:792px;padding:18px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.tray h2{font:400 22px var(--title);color:var(--brown)}.tray small{font-size:14px;color:var(--soft);line-height:1.4}
+.titem{height:104px;border-radius:18px;background:#F7F1E3;display:grid;place-items:center;position:relative;touch-action:none;flex:none}
+.titem img,.titem .pic{max-width:150px;max-height:84px;pointer-events:none}
+.titem .ghostpic{width:84px;height:70px;font-size:12px}
+.titem>span{position:absolute;left:10px;top:8px;font:400 14px var(--title);color:var(--soft);z-index:1}
+.titem.wetitem{opacity:.55}.titem.wetitem .pic{filter:saturate(.3)}
+.tray .empty{font-size:16px;color:var(--soft);line-height:1.5}
+.trayBtns{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.shop .thing{touch-action:none}
+/* 옷장 */
+.closet{position:absolute;left:24px;top:88px;right:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.person{position:relative;height:690px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.person h2{font:400 26px var(--title);color:var(--brown)}
+.wpic{position:relative;height:240px;display:grid;place-items:center;background:#F7F1E3;border-radius:20px}.wpic img{max-height:220px}
+.badge{position:absolute;bottom:10px;background:var(--berry);color:#fff;border-radius:999px;padding:6px 12px;font:400 15px var(--title)}
+.olist{display:flex;flex-direction:column;gap:10px;overflow:auto}
+.outfit{text-align:left;border:2px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.outfit b{font:400 19px var(--title)}.outfit span{font-size:15px;color:var(--soft)}
+.outfit.locked{opacity:.55;background:#F1EADB}.outfit.on{border-color:var(--leaf);background:var(--leafBg)}
+.closetnote{position:absolute;left:30px;top:796px;font-size:16px;color:var(--soft)}
+/* 낱말 서랍 */
+.wordbox{left:24px;top:88px;right:24px;height:742px;padding:26px 34px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.wordbox h2{font:400 26px var(--title);color:var(--brown)}
+.wrow2{display:flex;gap:16px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+.wrow2 b{font:400 21px var(--title)}
+.wthumb{width:84px;height:70px;display:grid;place-items:center}.wthumb .pic{max-width:84px;max-height:70px}.wthumb .ghostpic{width:70px;height:60px;font-size:11px}
+.wetthumb .pic{filter:saturate(.3)}
+.wchips{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.wchip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:400 19px var(--title)}.wchip.eaten{border-color:var(--leaf)}
+.eatnote{margin-top:auto;font-size:17px;color:var(--soft)}.eatnote b{color:var(--leaf);font-weight:400;font-family:var(--title)}
+.wordbox .empty{font-size:19px;color:var(--soft)}

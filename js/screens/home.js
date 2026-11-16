@@ -27,7 +27,7 @@ export function zoneMask(state, content){
   return parts.join(', ');
 }
 
-export function shopView(state, content, {w, h: hh, grid = false} = {}){
+export function shopView(state, content, {w, h: hh, defaultCat = true} = {}){
   const box = h('div', {class: 'shop', style: {width: w + 'px', height: hh + 'px'}});
   const faded = h('img', {class: 'base' + (ASSETS.shop.faded ? '' : ' faded'), src: ASSETS.shop.faded || ASSETS.shop.alive, alt: ''});
   const alive = h('img', {class: 'base alive', src: ASSETS.shop.alive, alt: ''});
@@ -40,11 +40,10 @@ export function shopView(state, content, {w, h: hh, grid = false} = {}){
     const c = cellCenter(ASSETS.grid[p.floor] || ASSETS.grid.g, p.a, p.b);
     layer.append(thing(p.itemId, state, toPct(c), c.y));
   }
-  if (!state.placed.some(p => p.itemId === 'cat')){
+  if (defaultCat && !state.placed.some(p => p.itemId === 'cat')){
     const c = cellCenter(ASSETS.grid.g, 3, 4);
     layer.append(thing('cat', state, toPct(c), c.y));
   }
-  box.refresh = () => {};
   return box;
 }
 
