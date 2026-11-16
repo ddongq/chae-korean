@@ -7,17 +7,25 @@ import {UNIT4} from '../content/unit4.js';
 import {GRADES} from '../content/dictation.js';
 import * as lesson from './screens/lesson.js';
 import * as dictation from './screens/dictation.js';
+import * as home from './screens/home.js';
+import * as map from './screens/map.js';
+import {openStore as _o, memoryBackend} from './store.js';
+import {releaseQueued} from './rewards.js';
+import {seedDemo} from './seed.js';
 
 const q = new URLSearchParams(location.search);
 export const params = {day: q.get('day'), seed: q.get('seed'), screen: q.get('screen'), arg: q.get('arg'), audit: q.has('audit')};
-const SCREENS = {lesson, dictation};
+const SCREENS = {lesson, dictation, home, map};
 export function registerScreen(id, mod){ SCREENS[id] = mod; }
 
 const WEEK = '일월화수목금토';
 async function boot(){
   initStage($('#stage'));
-  const store = await openStore();
+  // ?seed=demo는 시연용 상태를 메모리에만 만든다(기기 기록을 건드리지 않음)
+  const store = await openStore(params.seed ? memoryBackend() : undefined);
   const day = effectiveDay(store.state, params.day || dayKey(new Date()));
+  if (params.seed === 'demo') seedDemo(store.state, day);
+  if (releaseQueued(store.state, day).length) await store.save();
   const ctx = {
     store, day,
     content: {units: UNITS, unit: UNIT4, grades: GRADES},
