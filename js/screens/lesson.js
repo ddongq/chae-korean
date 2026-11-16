@@ -1,7 +1,7 @@
 // 차시 화면: 활동을 차례로. 첫 오답은 다시 생각, 두 번째 오답은 정답과 이유 + 다른 날 복습.
-import {h, say} from '../ui.js';
+import {h, say, later} from '../ui.js';
 import {speak} from '../speech.js';
-import {finishLesson, addReview, addStamp, markActive} from '../rewards.js';
+import {finishLesson, addReview, addStamp, markActive, stepSig} from '../rewards.js';
 import {lessonById} from '../../content/unit4.js';
 import * as choose from '../activities/choose.js';
 import * as fix from '../activities/fix.js';
@@ -18,7 +18,7 @@ export function mount(root, ctx, lessonId){
   const dots = h('div', {class: 'prog'}, L.steps.map(() => h('i')));
   root.append(h('div', {class: 'bar-sub'}, h('span', {class: 'k'}, `4단원 ${L.range}`), h('b', {}, L.title)), panel);
   let idx = 0;
-  const speakSafe = async text => { const r = await speak(text); if (r === 'novoice') say('rupert_comfort', '목소리를 찾지 못했어요. 글을 <b>천천히 읽어</b> 볼까?'); };
+  const speakSafe = async text => { const r = await speak(text); if (r !== 'ok') say('rupert_comfort', r === 'novoice' ? '목소리를 찾지 못했어요. 글을 <b>천천히 읽어</b> 볼까?' : '소리가 잘 안 나와요. 글을 <b>천천히 읽어</b> 볼까?'); };
 
   function next(){
     if (idx >= L.steps.length) return finish();
@@ -27,7 +27,8 @@ export function mount(root, ctx, lessonId){
     panel.replaceChildren(dots);
     const body = h('div', {class: 'body'}); panel.append(body);
     let tries = 0;
-    const advance = () => { idx++; setTimeout(next, 1100); };
+    let moved = false;
+    const advance = () => { if (moved) return; moved = true; idx++; later(next, 1100); };
     const api = {
       speak: speakSafe,
       say,
@@ -36,8 +37,8 @@ export function mount(root, ctx, lessonId){
         tries++;
         if (tries === 1){ say('rupert_think', '음, <b>다시 한번</b> 생각해 볼까?'); return 'retry'; }
         say('rupert_comfort', `정답은 이거야. ${step.why} <b>다른 날 다시</b> 만나 보자.`);
-        addReview(S, `${L.id}#${idx}`, 'quiz', {lesson: L.id, step: idx, word: L.reward.words[0]}, ctx.day);
-        idx++; setTimeout(next, 3200);
+        addReview(S, `${L.id}#${idx}`, 'quiz', {lesson: L.id, step: idx, sig: stepSig(step), word: L.reward.words[0]}, ctx.day);
+        if (!moved){ moved = true; idx++; later(next, 3200); }
         return 'reveal';
       },
       done(firstTry){ say('rupert_praise', firstTry ? '다 했어! <b>훌륭해.</b>' : '끝까지 해냈어! <b>멋져.</b>'); advance(); },

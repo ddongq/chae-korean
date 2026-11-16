@@ -27,10 +27,14 @@ export async function speak(text, {rate = 0.8} = {}){
   const voice = pickVoice(voices);
   if (voices.length && !voice) return 'novoice';
   return new Promise(ok => {
+    let settled = false;
+    const end = r => { if (!settled){ settled = true; clearTimeout(t); ok(r); } };
+    // 끝 소식이 오지 않는 WebKit 버그 대비: 글 길이에 맞춘 시간이 지나면 timeout
+    const t = setTimeout(() => end('timeout'), Math.max(6000, text.length * 350 / rate));
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'ko-KR'; u.rate = rate; if (voice) u.voice = voice;
-    u.onend = () => ok('ok'); u.onerror = () => ok('error');
-    synth.speak(u);
+    u.onend = () => end('ok'); u.onerror = () => end('error');
+    try { synth.speak(u); } catch { end('error'); }
   });
 }
 

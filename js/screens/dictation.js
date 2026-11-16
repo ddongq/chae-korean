@@ -1,7 +1,7 @@
 // 받아쓰기: 듣고 원고지에 쓰고, 정답을 겹쳐 보며 어절마다 O/X를 스스로 표시. X가 있는 문장은 다른 날 다시.
-import {h, say} from '../ui.js';
+import {h, say, later} from '../ui.js';
 import {speak} from '../speech.js';
-import {createBoard} from '../board.js';
+import {createBoard, manuscriptChars} from '../board.js';
 import {addReview, reviewAnswered, markActive} from '../rewards.js';
 
 export function mount(root, ctx, arg){
@@ -19,7 +19,7 @@ export function mount(root, ctx, arg){
   function show(){
     const text = list[i];
     const listen = h('button', {class: 'listen'}, '듣기');
-    listen.onclick = async () => { const r = await speak(text); if (r === 'novoice') say('chaewon_think', '목소리가 안 나와요. <b>부모님께 불러 달라고</b> 해 볼까?'); };
+    listen.onclick = async () => { const r = await speak(text); if (r !== 'ok') say('chaewon_think', '목소리가 안 나와요. <b>부모님께 불러 달라고</b> 해 볼까?'); };
     head.replaceChildren(listen, h('div', {}, h('h2', {}, `잘 듣고 원고지에 써 보세요`), h('p', {}, `${i + 1}번 문장 / ${list.length} · 띄어 쓰는 곳은 한 칸 비우고, 문장 끝에는 문장 부호도 써요.`)));
     const host = h('div', {class: 'dgrid'});
     const marksEl = h('div', {class: 'marks'});
@@ -33,7 +33,7 @@ export function mount(root, ctx, arg){
     say('chaewon_think', '다 쓰면 정답이 칸 위에 겹쳐 나와요. 낱말마다 <b>맞았는지 내가 표시</b>해요.');
     check.onclick = () => {
       if (board.isEmpty()){ say('rupert_cheer', '먼저 <b>들어 보고</b> 써 볼까?'); return; }
-      [...text].forEach((ch, k) => { const c = board.cells[k]; if (c && ch !== ' ') host.append(h('span', {class: 'ans', style: {left: c.x + 'px', top: c.y + 'px'}}, ch)); });
+      manuscriptChars(text).forEach((ch, k) => { const c = board.cells[k]; if (c && ch !== ' ') host.append(h('span', {class: 'ans', style: {left: c.x + 'px', top: c.y + 'px'}}, ch)); });
       const m = marks[i] = {};
       marksEl.replaceChildren(...words.map((w, k) => {
         const o = h('button', {class: 'o'}, 'O'), x = h('button', {class: 'x'}, 'X');
@@ -62,7 +62,7 @@ export function mount(root, ctx, arg){
       say('rupert_praise', `<b>${grade.name}</b> 끝! 틀린 문장은 다른 날 다시 만나.`);
     }
     await ctx.save();
-    setTimeout(() => ctx.go('home'), 1600);
+    later(() => ctx.go('home'), 1600);
   }
   show();
 }

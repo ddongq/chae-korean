@@ -1,6 +1,7 @@
 // 부모님 화면: 4자리 PIN. 진행표, 도장 기다리는 것(녹음 듣기·글 보기), 복습 대기, 읽기 기록, 지금 단원, 백업.
 import {h, say, hideTalk} from '../ui.js';
-import {stamp} from '../rewards.js';
+import {stamp, fixFutureDay} from '../rewards.js';
+import {dayKey, isLater} from '../day.js';
 import {lessonById} from '../../content/unit4.js';
 
 export async function hashPin(pin){
@@ -55,6 +56,9 @@ async function dashboard(root, ctx){
     h('div', {class: 'bar-sub'}, h('b', {}, '부모님')),
     h('section', {class: 'panel pcol pleft'},
       S.storageOk ? null : h('p', {class: 'warn'}, '이 기기에 기록이 저장되지 않고 있어요. 사생활 보호 모드인지 확인하고, 백업 파일을 저장해 두세요.'),
+      ctx.store.recovered ? h('p', {class: 'warn'}, '예전 기록의 모양이 달라 새로 시작했어요. 예전 기록은 기기 안에 따로 보관해 두었어요.') : null,
+      S.lastDay && isLater(S.lastDay, dayKey(new Date())) ? h('p', {class: 'warn'}, `마지막 날짜(${S.lastDay})가 오늘보다 뒤예요. 기기 시계를 바꾼 적이 있나요? `,
+        h('button', {class: 'btn', onclick: async () => { fixFutureDay(S, dayKey(new Date())); ctx.day = S.lastDay; await ctx.save(); dashboard(root, ctx); }}, '오늘로 맞추기')) : null,
       h('h2', {}, '진행'), h('p', {}, `함께 책방을 연 날 ${S.days.length}일 · 4단원 ${done}/${U.lessons.length}묶음 · 받아쓰기 ${Object.keys(S.dictation).length}/${ctx.content.grades.length}급 · 고양이 ${S.pet.stage}단계(낱말 ${S.pet.words.length}개)`),
       h('ul', {class: 'plist'}, U.lessons.map(l => h('li', {}, `${l.range} ${l.title}`, h('span', {class: 'muted'}, S.lessons[l.id] ? ` · ${S.lessons[l.id].day}` : ' · 아직')))),
       h('h2', {}, '다시 볼 것'), reviews.length ? h('ul', {class: 'plist'}, reviews) : h('p', {class: 'muted'}, '없어요.'),

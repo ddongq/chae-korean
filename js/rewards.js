@@ -74,3 +74,22 @@ export function addStamp(state, kind, ref, day){ state.stamps.push({kind, ref, d
 export function stamp(state, index){ if (state.stamps[index]) state.stamps[index].done = true; }
 
 export const tooFast = (chars, ms) => ms < chars * FAST_MS_PER_CHAR;
+
+// 단원의 모든 차시를 마쳤는데 단원 마침(구역 되살림·옷)이 아직이면 true — 마무리 화면을 놓쳐도 홈에서 챙긴다
+export const unitReady = (state, unit) => !state.units[unit.id] && unit.lessons.every(l => state.lessons[l.id]);
+
+// 기기 시계를 미래로 돌렸다 되돌린 경우 등: 마지막 날짜가 오늘보다 미래면 오늘로 맞춘다(부모님 화면)
+export function fixFutureDay(state, today){
+  if (!state.lastDay || !isLater(state.lastDay, today)) return false;
+  state.lastDay = today;
+  return true;
+}
+
+// 복습이 가리키는 문항 찾기: 순서 번호보다 저장해 둔 문항 글(sig)을 믿는다. 못 찾으면 null(복습을 지운다).
+export const stepSig = step => step.prompt || step.question || (step.lines || []).map(l => l.text).join('/') || (step.tokens || []).join(' ');
+export function resolveReviewStep(review, lessonById){
+  const L = lessonById(review.ref?.lesson); if (!L) return null;
+  const at = L.steps[review.ref.step];
+  if (at && (!review.ref.sig || stepSig(at) === review.ref.sig)) return at;
+  return review.ref.sig ? L.steps.find(s => stepSig(s) === review.ref.sig) || null : null;
+}

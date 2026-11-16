@@ -29,7 +29,8 @@ const WEEK = '일월화수목금토';
 async function boot(){
   initStage($('#stage'));
   // ?seed=demo는 시연용 상태를 메모리에만 만든다(기기 기록을 건드리지 않음)
-  const store = await openStore(params.seed ? memoryBackend() : undefined);
+  // ?seed·?day(시험용)는 메모리 저장소로만 연다 — 아이 기기 기록에 시험 날짜가 남지 않게
+  const store = await openStore(params.seed || params.day ? memoryBackend() : undefined);
   const day = effectiveDay(store.state, params.day || dayKey(new Date()));
   if (params.seed === 'demo') seedDemo(store.state, day);
   if (releaseQueued(store.state, day).length) await store.save();

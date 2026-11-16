@@ -1,7 +1,7 @@
 // 다시 꺼내 보기: 젖은 잉크 말리기(다른 날 낱말 떠올리기)와 헷갈렸던 문제 다시 풀기.
-import {h, say, josa} from '../ui.js';
+import {h, say, josa, later} from '../ui.js';
 import {speak} from '../speech.js';
-import {dryItem, feed, reviewAnswered, wetToDry, dueReviews, markActive} from '../rewards.js';
+import {dryItem, feed, reviewAnswered, wetToDry, dueReviews, markActive, resolveReviewStep} from '../rewards.js';
 import {lessonById, UNIT4} from '../../content/unit4.js';
 import {itemPic} from './wrap.js';
 import * as choose from '../activities/choose.js';
@@ -32,8 +32,8 @@ export function mount(root, ctx){
       step = q.lesson.reward.recall;
       panel.append(h('div', {class: 'recall-item'}, h('div', {class: 'wet small'}, itemPic(q.id)), h('b', {}, q.lesson.reward.itemName), h('span', {}, '잉크를 말리려면 맞혀 봐!')), body);
     } else {
-      const r = S.reviews[q.key], L = lessonById(r.ref.lesson);
-      step = L.steps[r.ref.step];
+      step = resolveReviewStep(S.reviews[q.key], lessonById);
+      if (!step){ delete S.reviews[q.key]; return next(); }   // 문항이 바뀌어 찾을 수 없으면 그 복습은 지운다
       panel.append(body);
     }
     const finishOne = ok => {
@@ -41,16 +41,16 @@ export function mount(root, ctx){
         if (ok){ dryItem(S, q.id, ctx.day); const f = feed(S, q.lesson.reward.words); markActive(S, ctx.day);
           say('rupert_praise', `잉크가 다 말랐어! <b>${josa(q.lesson.reward.itemName, '이', '가')}</b> 보관함에 들어갔어.${f.stageUp ? ' 고양이도 쑥 자랐어!' : ''}`);
           panel.querySelector('.wet')?.classList.add('dry'); }
-        else say('rupert_comfort', `${step.why} 괜찮아, <b>내일 다시</b> 말려 보자.`);
+        else say('rupert_comfort', `${step.why} 괜찮아, 잉크는 그대로 기다려. <b>다음에 다시</b> 말려 보자.`);
       } else {
         const out = reviewAnswered(S, q.key, ok, ctx.day); markActive(S, ctx.day);
         if (out.feedWord) feed(S, [out.feedWord]);
         say(ok ? 'rupert_praise' : 'rupert_comfort', ok ? '이번엔 맞혔네! <b>기억해 냈어.</b>' : `${step.why} <b>다음에 또</b> 만나 보자.`);
       }
-      setTimeout(next, 2200);
+      later(next, 2200);
     };
     const api = {
-      speak: t => speak(t), say,
+      speak: async t => { const r = await speak(t); if (r !== 'ok') say('rupert_comfort', '소리가 잘 안 나와요. 글을 <b>천천히 읽어</b> 볼까?'); }, say,
       check(correct){
         if (correct){ finishOne(true); return 'ok'; }
         tries++;
@@ -63,6 +63,6 @@ export function mount(root, ctx){
     say('rupert_explain', q.type === 'dry' ? '어제 만난 낱말, 기억나?' : '전에 헷갈렸던 문제야. 다시 해 볼까?');
     KINDS[step.kind].render(body, step, api);
   };
-  const done = () => { say('rupert_hello', '다시 꺼내 보기 끝! <b>오늘 할 일</b>로 가 보자.'); setTimeout(() => ctx.go('home'), 1400); };
+  const done = () => { say('rupert_hello', '다시 꺼내 보기 끝! <b>오늘 할 일</b>로 가 보자.'); later(() => ctx.go('home'), 1400); };
   next();
 }

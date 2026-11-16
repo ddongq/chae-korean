@@ -55,13 +55,19 @@ export function dragFrom(e, makeGhost, onDrop){
 }
 
 // 화면 전환: screens = {id: module(mount)}
-let screens = {}, ctxRef = null, current = null;
+let screens = {}, ctxRef = null, current = null, gen = 0, cleanup = null;
+// 화면 세대: 화면이 바뀌면 이전 화면이 걸어 둔 늦은 일(later)은 실행되지 않는다
+export function nextScreen(){ gen++; }
+export function later(fn, ms){ const g = gen; return setTimeout(() => { if (g === gen) fn(); }, ms); }
 export function setScreens(map, ctx){ screens = map; ctxRef = ctx; }
 export function showScreen(id, arg){
+  nextScreen();
+  if (cleanup){ try { cleanup(); } catch {} cleanup = null; }   // 녹음 끄기 등 이전 화면 정리
   const root = $('#screen'); root.innerHTML = ''; root.className = 'scr-' + id;
   current = id;
   const m = screens[id];
-  if (m) m.mount(root, ctxRef, arg);
+  const out = m ? m.mount(root, ctxRef, arg) : null;
+  if (typeof out === 'function') cleanup = out;
 }
 export const currentScreen = () => current;
 

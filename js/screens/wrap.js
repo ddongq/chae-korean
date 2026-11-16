@@ -1,5 +1,5 @@
 // 마무리: 새 소품(젖은 잉크) + 오늘 낱말을 고양이에게 먹이기. 단원 마지막이면 구역이 통째로 되살아나고 옷을 받는다.
-import {h, say, dragFrom, josa} from '../ui.js';
+import {h, say, dragFrom, josa, later} from '../ui.js';
 import {feed, finishUnit} from '../rewards.js';
 import {ASSETS} from '../assets.js';
 import {lessonById} from '../../content/unit4.js';
@@ -61,17 +61,19 @@ export function mount(root, ctx, arg = {}){
     if (out.repeat) return false;
     celebrated = true;
     ctx.save();
-    setTimeout(() => celebrate(unit, out), 600);
+    later(() => celebrateUnit(root, ctx, unit, out), 600);
     return true;
   }
-  function celebrate(unit, out){
-    const ov = h('div', {class: 'overlay'});
-    const shop = shopView(S, ctx.content, {w: 1000, h: 746});
-    shop.classList.add('celebrate');
-    ov.append(shop, h('div', {class: 'gift'}, h('h2', {}, `${josa(unit.zoneName, '이', '가')} 되살아났어요!`),
-      out.outfit ? h('p', {}, '선물: ', h('b', {}, unit.outfitName), ' — 옷장에서 입어 볼 수 있어요.') : null,
-      h('button', {class: 'btn go', onclick: () => ctx.go('home')}, '책방으로')));
-    root.append(ov);
-    say('rupert_cheer', `해냈구나! <b>${unit.zoneName}</b>에 색이 다 돌아왔어.`);
-  }
+}
+
+// 단원 마침 축하: 구역이 통째로 색을 찾고 옷을 받는다(마무리 화면, 또는 놓쳤으면 홈에서)
+export function celebrateUnit(root, ctx, unit, out){
+  const ov = h('div', {class: 'overlay'});
+  const shop = shopView(ctx.store.state, ctx.content, {w: 1000, h: 746});
+  shop.classList.add('celebrate');
+  ov.append(shop, h('div', {class: 'gift'}, h('h2', {}, `${josa(unit.zoneName, '이', '가')} 되살아났어요!`),
+    out.outfit ? h('p', {}, '선물: ', h('b', {}, unit.outfitName), ' — 옷장에서 입어 볼 수 있어요.') : null,
+    h('button', {class: 'btn go', onclick: () => ctx.go('home')}, '책방으로')));
+  root.append(ov);
+  say('rupert_cheer', `해냈구나! <b>${unit.zoneName}</b>에 색이 다 돌아왔어.`);
 }

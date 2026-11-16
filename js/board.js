@@ -7,7 +7,14 @@ export function manuscriptCells({cols, rows, cell, gap = 0, rowGap = 0}){
   return out;
 }
 
-export function createBoard(host, {w, h, mode = 'free', cols = 12, rows = 2, cell = 98, gap = 6, rowGap = 40, indentFirst = false, ink = '#2F2A26'} = {}){
+// 원고지 칸에 들어갈 글자들: 쉼표·마침표 뒤의 띄어쓰기는 칸을 비우지 않는다(초등 원고지 쓰기)
+export function manuscriptChars(text){
+  const out = [];
+  [...text].forEach((ch, i, a) => { if (ch === ' ' && /[,.]/.test(a[i - 1] || '')) return; out.push(ch); });
+  return out;
+}
+
+export function createBoard(host, {w, h, mode = 'free', cols = 12, rows = 2, cell = 98, gap = 6, rowGap = 40, indentFirst = false, ink = '#2F2A26', undo: keepUndo = false} = {}){
   host.style.position = 'relative'; host.style.width = w + 'px'; host.style.height = h + 'px';
   const mkCanvas = () => { const c = document.createElement('canvas'); Object.assign(c.style, {position: 'absolute', inset: '0', width: '100%', height: '100%'}); host.append(c); return c; };
   const bg = mkCanvas(), cv = mkCanvas();
@@ -35,7 +42,7 @@ export function createBoard(host, {w, h, mode = 'free', cols = 12, rows = 2, cel
     if (penSeen && e.pointerType === 'touch') return;
     try { cv.setPointerCapture(e.pointerId); } catch {}
     drawing = e.pointerId; last = pos(e);
-    undoStack.push(ctx.getImageData(0, 0, cv.width, cv.height)); if (undoStack.length > 30) undoStack.shift();
+    if (keepUndo){ undoStack.push(ctx.getImageData(0, 0, cv.width, cv.height)); if (undoStack.length > 10) undoStack.shift(); }   // 되돌리기를 쓸 때만 화면을 복사(메모리)
     ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(last[0], last[1], width(e) / 2, 0, Math.PI * 2); ctx.fill();
   });
   cv.addEventListener('pointermove', e => {
