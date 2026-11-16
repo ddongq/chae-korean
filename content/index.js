@@ -1,8 +1,15 @@
 // 단원 내용 목록. 새 단원은 여기 한 줄로 잇는다.
 import {UNITS, unitById} from './units.js';
-import {UNIT4} from './unit4.js';
+import {UNIT0} from './unit0.js';
+import {UNIT1} from './unit1.js';
+import {UNIT2} from './unit2.js';
+import {UNIT3} from './unit3.js';
 import {UNITM} from './unitm.js';
-export const UNIT_CONTENT = {um: UNITM, u4: UNIT4};
+import {UNIT4} from './unit4.js';
+import {UNIT5} from './unit5.js';
+import {UNIT6} from './unit6.js';
+// 교과서 순서. 독서·1·2·3은 학교에서 지난 단원이라 짧은 복습(4묶음), 매체·4·5·6은 차시대로.
+export const UNIT_CONTENT = {u0: UNIT0, u1: UNIT1, u2: UNIT2, u3: UNIT3, um: UNITM, u4: UNIT4, u5: UNIT5, u6: UNIT6};
 const all = (byId = UNIT_CONTENT) => Object.values(byId).flatMap(u => u.lessons);
 export const lessonById = id => all().find(l => l.id === id);
 export const lessonByItem = item => all().find(l => l.reward?.item === item);

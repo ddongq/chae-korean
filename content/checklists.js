@@ -13,4 +13,11 @@ export const UM = [
   '그때의 마음을 나타내는 말을 넣었나요?',
   '내 글에 개인 정보(주소·전화번호·학교)가 들어가지 않았나요?',
 ];
-export const CHECKLISTS = {school: SCHOOL, u4: U4, um: UM};
+import {UNIT0} from './unit0.js';
+import {UNIT1} from './unit1.js';
+import {UNIT2} from './unit2.js';
+import {UNIT3} from './unit3.js';
+import {UNIT5} from './unit5.js';
+import {UNIT6} from './unit6.js';
+export const CHECKLISTS = {school: SCHOOL, u4: U4, um: UM,
+  ...Object.fromEntries([UNIT0, UNIT1, UNIT2, UNIT3, UNIT5, UNIT6].filter(u => u.checklist).map(u => [u.id, u.checklist]))};
