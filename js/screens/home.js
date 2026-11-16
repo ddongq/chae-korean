@@ -65,6 +65,7 @@ export function mount(root, ctx){
   const tasks = todayTasks(S, ctx.day, ctx.content);
   const shop = shopView(S, ctx.content, {w: 1000, h: 746});
   shop.classList.add('home-shop');
+  shop.addEventListener('click', e => { if (!e.target.closest('.pbub')) ctx.go('deco'); });   // 책방 그림을 누르면 꾸미기
   const unit = unitById(S.currentUnit);
   const catBub = h('div', {class: 'pbub'}, tasks[0]?.kind === 'dry' ? '어제 만든 소품, 잉크가 아직 젖어 있어. 같이 말리자!' : tasks.length ? '오늘도 와 줬구나!' : '오늘 책방 일 끝! 꾸미러 갈까?');
   shop.append(catBub);

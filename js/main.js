@@ -43,7 +43,7 @@ async function boot(){
     store, day,
     content: {units: UNITS, unit: UNIT4, grades: GRADES},
     save: () => store.save(),
-    go: (id, arg) => { refreshDay(); $('#btnHome').hidden = id === 'home'; ['btnWardrobe','btnWords','btnParent'].forEach(b => $('#' + b).hidden = id !== 'home'); showScreen(id, arg); },
+    go: (id, arg) => { refreshDay(); $('#btnHome').hidden = id === 'home'; ['btnDeco','btnWardrobe','btnWords','btnParent'].forEach(b => $('#' + b).hidden = id !== 'home'); showScreen(id, arg); },
   };
   window.__ctx = ctx;   // 콘솔 확인용
   setScreens(SCREENS, ctx);
@@ -55,6 +55,7 @@ async function boot(){
   }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !params.day){ const before = ctx.day; refreshDay(); if (ctx.day !== before) ctx.go('home'); } });
   $('#btnHome').onclick = () => ctx.go('home');
+  $('#btnDeco').onclick = () => ctx.go('deco');
   $('#btnWardrobe').onclick = () => ctx.go('wardrobe');
   $('#btnWords').onclick = () => ctx.go('words');
   // 부모님: 1초 길게 누르기

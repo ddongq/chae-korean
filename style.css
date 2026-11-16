@@ -214,3 +214,5 @@ button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent
 #curUnit{font:400 18px var(--body);padding:10px;border-radius:12px;border:2px solid var(--line);background:#fff}
 .prow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .chip.pressing{background:#FFE08A}
+.chip.deco{background:var(--leaf);color:#fff;box-shadow:0 3px 0 #3C6230}
+.home-shop{cursor:pointer}
