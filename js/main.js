@@ -15,13 +15,14 @@ import * as reading from './screens/reading.js';
 import * as deco from './screens/deco.js';
 import * as wardrobe from './screens/wardrobe.js';
 import * as words from './screens/words.js';
+import * as parent from './screens/parent.js';
 import {openStore as _o, memoryBackend} from './store.js';
 import {releaseQueued} from './rewards.js';
 import {seedDemo} from './seed.js';
 
 const q = new URLSearchParams(location.search);
 export const params = {day: q.get('day'), seed: q.get('seed'), screen: q.get('screen'), arg: q.get('arg'), audit: q.has('audit')};
-const SCREENS = {lesson, dictation, home, map, wrap, recall, reading, deco, wardrobe, words};
+const SCREENS = {lesson, dictation, home, map, wrap, recall, reading, deco, wardrobe, words, parent};
 export function registerScreen(id, mod){ SCREENS[id] = mod; }
 
 const WEEK = '일월화수목금토';
@@ -45,6 +46,11 @@ async function boot(){
   $('#btnHome').onclick = () => ctx.go('home');
   $('#btnWardrobe').onclick = () => ctx.go('wardrobe');
   $('#btnWords').onclick = () => ctx.go('words');
+  // 부모님: 1초 길게 누르기
+  let pressT = null;
+  const pb = $('#btnParent');
+  pb.addEventListener('pointerdown', () => { pb.classList.add('pressing'); pressT = setTimeout(() => { pb.classList.remove('pressing'); ctx.go('parent'); }, 1000); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => pb.addEventListener(t, () => { clearTimeout(pressT); pb.classList.remove('pressing'); }));
   ctx.go(params.screen || 'home', params.arg);
 }
 boot();

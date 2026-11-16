@@ -193,3 +193,19 @@ button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent
 .wchip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:400 19px var(--title)}.wchip.eaten{border-color:var(--leaf)}
 .eatnote{margin-top:auto;font-size:17px;color:var(--soft)}.eatnote b{color:var(--leaf);font-weight:400;font-family:var(--title)}
 .wordbox .empty{font-size:19px;color:var(--soft)}
+/* 부모님 */
+.pinbox{left:433px;top:150px;width:500px;height:660px;padding:34px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.pinbox h2{font:400 26px var(--title);color:var(--brown)}
+.pindots{display:flex;gap:18px}.pindots i{width:22px;height:22px;border-radius:50%;border:3px solid var(--brown)}.pindots i.on{background:var(--brown)}
+.pinkeys{display:grid;grid-template-columns:repeat(3,110px);gap:14px}
+.pinkey{height:84px;border:0;border-radius:20px;background:#F7F1E3;font:400 30px var(--title);color:var(--ink)}
+.pcol{top:88px;height:860px;padding:24px 28px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.pleft{left:24px;width:640px}.pright{left:684px;width:658px}
+.pcol h2{font:400 22px var(--title);color:var(--brown);margin-top:8px}.pcol p{font-size:17px;line-height:1.5}
+.plist{padding-left:20px;font-size:16px;line-height:1.7}.muted{color:var(--soft);font-size:15px}
+.warn{background:var(--berryBg);color:var(--berry);border-radius:14px;padding:12px}
+.stamps{display:flex;flex-direction:column;gap:12px}.stampItem{display:flex;flex-direction:column;gap:8px;background:#F7F1E3;border-radius:16px;padding:12px}
+.stampItem .btn{align-self:flex-start;padding:12px 18px;font-size:18px}.writing{max-width:100%;border-radius:10px;background:#fff}
+#curUnit{font:400 18px var(--body);padding:10px;border-radius:12px;border:2px solid var(--line);background:#fff}
+.prow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.chip.pressing{background:#FFE08A}
