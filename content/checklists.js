@@ -9,4 +9,8 @@ export const U4 = [
   '웃어른께 높임 표현을 썼나요?',
   '상대의 마음을 헤아리는 말을 넣었나요?',
 ];
-export const CHECKLISTS = {school: SCHOOL, u4: U4};
+export const UM = [
+  '그때의 마음을 나타내는 말을 넣었나요?',
+  '내 글에 개인 정보(주소·전화번호·학교)가 들어가지 않았나요?',
+];
+export const CHECKLISTS = {school: SCHOOL, u4: U4, um: UM};

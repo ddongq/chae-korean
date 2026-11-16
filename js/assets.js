@@ -23,6 +23,8 @@ export const ASSETS = {
     'u4-vase': {src: null, h: 90}, 'u4-screen': {src: null, h: 90}, 'u4-guestbook': {src: null, h: 80},
     'u4-umbrella': {src: null, h: 80}, 'u4-lantern': {src: 'img/item_lamp.png', h: 90}, 'u4-plant': {src: 'img/item_plant.png', h: 80},
     'u4-bell': {src: null, h: 80},
+    'um-postbox': {src: null, h: 90}, 'um-easel': {src: null, h: 90}, 'um-postcards': {src: null, h: 90},
+    'um-mobile': {src: null, h: 100}, 'um-cart': {src: null, h: 80},
   },
   cat: ['img/cat_1.png', 'img/cat_2.png', 'img/cat_3.png'],
   catH: [110, 135, 160],

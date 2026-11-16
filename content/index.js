@@ -1,7 +1,8 @@
 // 단원 내용 목록. 새 단원은 여기 한 줄로 잇는다.
 import {UNITS, unitById} from './units.js';
 import {UNIT4} from './unit4.js';
-export const UNIT_CONTENT = {u4: UNIT4};
+import {UNITM} from './unitm.js';
+export const UNIT_CONTENT = {um: UNITM, u4: UNIT4};
 const all = (byId = UNIT_CONTENT) => Object.values(byId).flatMap(u => u.lessons);
 export const lessonById = id => all().find(l => l.id === id);
 export const lessonByItem = item => all().find(l => l.reward?.item === item);
