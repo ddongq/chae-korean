@@ -3,6 +3,7 @@ import {h, say} from '../ui.js';
 import {ASSETS, REF_W, REF_H} from '../assets.js';
 import {cellCenter} from '../iso.js';
 import {todayTasks} from '../plan.js';
+import {releaseQueued} from '../rewards.js';
 import {unitById} from '../../content/units.js';
 
 const TASK_TEXT = {
@@ -59,6 +60,7 @@ export function thing(id, state, pos, y){
 
 export function mount(root, ctx){
   const S = ctx.store.state;
+  if (releaseQueued(S, ctx.day).length) ctx.save();   // 앱을 켜 둔 채 날이 바뀌어도 기다리던 소품이 온다
   const tasks = todayTasks(S, ctx.day, ctx.content);
   const shop = shopView(S, ctx.content, {w: 1000, h: 746});
   shop.classList.add('home-shop');
@@ -80,5 +82,8 @@ export function mount(root, ctx){
     start,
     h('button', {class: 'btn', onclick: () => ctx.go('map')}, '단원 지도'),
     h('div', {class: 'days'}, '함께 책방을 연 날 ', h('b', {}, `${S.days.length}일`))));
-  say('rupert_hello', tasks.length ? `왔구나, 채원아. <b>${unit.zoneName}</b> 쪽이 조금씩 색을 찾고 있어.` : '오늘도 수고했어. <b>책방을 꾸며</b> 볼까?');
+  const zoneDone = !!S.units[unit.id];
+  say('rupert_hello', !tasks.length ? '오늘도 수고했어. <b>책방을 꾸며</b> 볼까?'
+    : zoneDone ? `<b>${unit.zoneName}</b>에 색이 다 돌아왔어. 오늘은 복습하는 날이야.`
+    : `왔구나, 채원아. <b>${unit.zoneName}</b> 쪽이 조금씩 색을 찾고 있어.`);
 }

@@ -37,12 +37,17 @@ async function boot(){
     store, day,
     content: {units: UNITS, unit: UNIT4, grades: GRADES},
     save: () => store.save(),
-    go: (id, arg) => { $('#btnHome').hidden = id === 'home'; ['btnWardrobe','btnWords','btnParent'].forEach(b => $('#' + b).hidden = id !== 'home'); showScreen(id, arg); },
+    go: (id, arg) => { refreshDay(); $('#btnHome').hidden = id === 'home'; ['btnWardrobe','btnWords','btnParent'].forEach(b => $('#' + b).hidden = id !== 'home'); showScreen(id, arg); },
   };
   window.__ctx = ctx;   // 콘솔 확인용
   setScreens(SCREENS, ctx);
-  const [y, m, d] = day.split('-').map(Number);
-  $('#barDate').textContent = `${m}월 ${d}일 ${WEEK[new Date(y, m - 1, d).getDay()]}요일`;
+  // 앱을 켜 둔 채 날이 바뀌어도(홈 화면 앱은 다음 날에도 그대로 열릴 수 있다) 화면을 옮길 때마다 오늘을 다시 본다
+  function refreshDay(){
+    if (!params.day){ const now = effectiveDay(store.state, dayKey(new Date())); if (now !== ctx.day) ctx.day = now; }
+    const [y, m, d] = ctx.day.split('-').map(Number);
+    $('#barDate').textContent = `${m}월 ${d}일 ${WEEK[new Date(y, m - 1, d).getDay()]}요일`;
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !params.day){ const before = ctx.day; refreshDay(); if (ctx.day !== before) ctx.go('home'); } });
   $('#btnHome').onclick = () => ctx.go('home');
   $('#btnWardrobe').onclick = () => ctx.go('wardrobe');
   $('#btnWords').onclick = () => ctx.go('words');
@@ -52,5 +57,6 @@ async function boot(){
   pb.addEventListener('pointerdown', () => { pb.classList.add('pressing'); pressT = setTimeout(() => { pb.classList.remove('pressing'); ctx.go('parent'); }, 1000); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => pb.addEventListener(t, () => { clearTimeout(pressT); pb.classList.remove('pressing'); }));
   ctx.go(params.screen || 'home', params.arg);
+  if (params.audit) import('./audit.js');
 }
 boot();
