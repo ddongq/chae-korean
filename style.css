@@ -133,11 +133,16 @@ button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent
 .words{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .word{font:400 26px/1 var(--title);background:#fff;border-radius:16px;padding:14px 20px;box-shadow:0 4px 0 var(--shadow);touch-action:none}
 .word.gone{visibility:hidden}
-.feed{position:relative;flex:1;border-radius:22px;background:#F7F1E3;overflow:hidden}
-.bowl{position:absolute;left:24%;bottom:40px;transform:translateX(-50%);width:170px;height:56px;border-radius:0 0 90px 90px;background:#E9C99B;border-top:8px solid #D5AE77}
-.feedcat{position:absolute;left:62%;bottom:24px;height:300px;transform:translateX(-50%);filter:drop-shadow(0 6px 4px rgba(90,60,30,.25))}
+.feed{position:relative;flex:1;border-radius:22px;overflow:hidden;
+  background:linear-gradient(#F7EEDD 0 46%,transparent 46%),repeating-linear-gradient(90deg,#E8C99A 0 118px,#DDBA88 118px 120px),linear-gradient(#E6C594,#D9B27C)}
+.feed:before{content:"";position:absolute;left:0;right:0;top:46%;height:6px;background:#C9A06A;opacity:.6}
+.mat{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:84%;height:120px;border-radius:50%;
+  background:radial-gradient(closest-side,#C8D9B8 0 58%,#B2C79F 60% 70%,#C8D9B8 72% 86%,#A9BE95 88%);box-shadow:inset 0 0 0 3px rgba(94,140,74,.25)}
+.bowl{position:absolute;left:70%;bottom:30px;transform:translateX(-50%);width:230px}.bowlsvg{display:block;width:100%;height:auto}
+.bowl.plop{animation:plop .35s ease}@keyframes plop{40%{transform:translateX(-50%) scale(1.06,.94)}}
+.feedcat{position:absolute;left:32%;bottom:34px;height:300px;transform:translateX(-50%);filter:drop-shadow(0 6px 4px rgba(90,60,30,.25))}
 .feedcat.hop{animation:hop .5s ease 2}@keyframes hop{50%{transform:translate(-50%,-12%)}}
-.feed .pbub{left:62%;top:14px;transform:translateX(-50%);z-index:5}
+.feed .pbub{left:32%;top:14px;transform:translateX(-50%);z-index:5}
 .stage-dots{display:flex;gap:18px;justify-content:center;font-size:17px;color:var(--soft)}
 .stage-dots i{display:inline-block;width:16px;height:16px;border-radius:50%;background:#E6DAC2;margin-right:6px;vertical-align:-2px}.stage-dots i.on{background:var(--leaf)}
 .wbtns{position:absolute;right:24px;top:784px;display:flex;gap:14px}

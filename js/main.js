@@ -1,5 +1,7 @@
 // 진입점: 날짜 정하기, 저장소 열기, 화면 고르기
 import {initStage, setScreens, showScreen, $} from './ui.js';
+import {unlockSpeech} from './speech.js';
+import {lockZoom} from './nozoom.js';
 import {openStore} from './store.js';
 import {dayKey, effectiveDay} from './day.js';
 import {UNITS} from '../content/units.js';
@@ -28,6 +30,9 @@ export function registerScreen(id, mod){ SCREENS[id] = mod; }
 const WEEK = '일월화수목금토';
 async function boot(){
   initStage($('#stage'));
+  lockZoom();
+  // 아이패드: 손을 떼는 순간(touchend·click)이 '사용자 동작'이라 그때 소리 잠금을 푼다
+  ['touchend', 'click'].forEach(t => document.addEventListener(t, unlockSpeech, {capture: true, passive: true}));
   // ?seed=demo는 시연용 상태를 메모리에만 만든다(기기 기록을 건드리지 않음)
   // ?seed·?day(시험용)는 메모리 저장소로만 연다 — 아이 기기 기록에 시험 날짜가 남지 않게
   const store = await openStore(params.seed || params.day ? memoryBackend() : undefined);

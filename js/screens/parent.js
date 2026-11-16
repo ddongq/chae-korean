@@ -1,6 +1,7 @@
 // 부모님 화면: 4자리 PIN. 진행표, 도장 기다리는 것(녹음 듣기·글 보기), 복습 대기, 읽기 기록, 지금 단원, 백업.
 import {h, say, hideTalk} from '../ui.js';
 import {stamp, fixFutureDay} from '../rewards.js';
+import {speak} from '../speech.js';
 import {dayKey, isLater} from '../day.js';
 import {lessonById} from '../../content/unit4.js';
 
@@ -66,5 +67,23 @@ async function dashboard(root, ctx){
     h('section', {class: 'panel pcol pright'},
       h('h2', {}, `도장 기다리는 것 (${pending.length})`), pendingEls.length ? h('div', {class: 'stamps'}, pendingEls) : h('p', {class: 'muted'}, '없어요. 주말에 몰아서 찍어도 괜찮아요.'),
       h('h2', {}, '지금 배우는 단원'), unitSel,
-      h('h2', {}, '백업'), h('div', {class: 'prow'}, exportBtn, file, importMsg)));
+      h('h2', {}, '백업'), h('div', {class: 'prow'}, exportBtn, file, importMsg),
+      h('h2', {}, '목소리 확인'), voiceCheck()));
+}
+
+// 읽어 주기 진단: 한국어 목소리 수와 읽기 결과를 보여 준다(아이패드에서 소리가 안 날 때 원인 찾기)
+function voiceCheck(){
+  const out = h('span', {class: 'muted'});
+  const btn = h('button', {class: 'btn sky'}, '목소리 들어 보기');
+  btn.onclick = () => {
+    const synth = globalThis.speechSynthesis;
+    const vs = synth?.getVoices?.() || [];
+    const ko = vs.filter(v => (v.lang || '').toLowerCase().startsWith('ko'));
+    out.textContent = `읽는 중… (목소리 ${vs.length}개, 한국어 ${ko.length}개${ko.length ? ': ' + ko.map(v => v.name).slice(0, 4).join(', ') : ''})`;
+    speak('안녕하세요, 채원아. 오늘도 책방에 와 줘서 고마워.').then(r => {
+      const msg = {ok: '잘 읽었어요', novoice: '한국어 목소리가 없어요(설정 > 손쉬운 사용 > 읽기 및 말하기 > 음성에서 한국어 음성을 받아 주세요)', error: '읽다가 오류가 났어요', timeout: '끝 소식이 오지 않았어요(소리가 났는지 알려 주세요)'}[r] || r;
+      out.textContent = `결과: ${msg} · 목소리 ${vs.length}개, 한국어 ${ko.length}개${ko.length ? ' (' + ko.map(v => v.name).slice(0, 4).join(', ') + ')' : ''}`;
+    });
+  };
+  return h('div', {class: 'prow'}, btn, out);
 }
