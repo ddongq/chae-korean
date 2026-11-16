@@ -2,15 +2,21 @@
 // 좌표는 책방 그림을 가로 1400으로 줄인 기준(세로 1045).
 export const REF_W = 1400, REF_H = 1045;
 export const ASSETS = {
-  shop: {alive: 'img/shop_iso.jpg', faded: null},     // faded가 null이면 CSS 흑백으로 대신
+  // 빈 책방(그림 요청 04): 고정 가구만 있는 칠한 판·옅은 판. faded가 null이면 CSS 흑백으로 대신
+  shop: {alive: 'img/shop_empty_alive.jpg', faded: 'img/shop_empty_faded.jpg'},
   // 구역 중심과 반지름(기준 좌표). 되살아날 때 이 둘레가 칠한 판으로 바뀐다.
   zones: {
-    u0: {x: 300, y: 560, rx: 170, ry: 190}, u1: {x: 440, y: 250, rx: 170, ry: 140},
-    u2: {x: 270, y: 715, rx: 130, ry: 110}, u3: {x: 810, y: 210, rx: 130, ry: 120},
-    um: {x: 1060, y: 270, rx: 150, ry: 120}, u4: {x: 950, y: 640, rx: 150, ry: 110},
-    u5: {x: 600, y: 530, rx: 150, ry: 170}, u6: {x: 1160, y: 620, rx: 140, ry: 150},
+    u0: {x: 321, y: 600, rx: 195, ry: 221},
+    u1: {x: 449, y: 216, rx: 195, ry: 156},
+    u2: {x: 210, y: 728, rx: 143, ry: 143},
+    u3: {x: 824, y: 188, rx: 143, ry: 143},
+    um: {x: 1072, y: 252, rx: 169, ry: 143},
+    u4: {x: 962, y: 656, rx: 169, ry: 130},
+    u5: {x: 596, y: 600, rx: 169, ry: 182},
+    u6: {x: 1182, y: 656, rx: 156, ry: 195},
   },
-  grid: {g: {F: {x: 690, y: 1000}, L: {x: 150, y: 792}, R: {x: 1292, y: 748}, N: 10}},
+  // 1층 마루 꼭짓점: 그림 세션이 잰 2336px 좌표를, 집이 크게 보이게 (250,100)-(2050,1444)로 자른 판 기준 1400폭으로 환산
+  grid: {g: {F: {x: 710.9, y: 1009.6}, L: {x: 108.9, y: 759.9}, R: {x: 1330.8, y: 765.3}, N: 10}},
   // 소품(대역). src가 없으면 이름 실루엣.
   items: {
     'u4-cushions': {src: 'img/item_cushion.png', h: 64}, 'u4-teacart': {src: 'img/item_teatable.png', h: 74},
