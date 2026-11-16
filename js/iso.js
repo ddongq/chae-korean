@@ -14,6 +14,9 @@ export function cellAt(g, x, y){
   return {a: Math.floor(a), b: Math.floor(b)};
 }
 
+// 가구가 서 있는 칸(grid.blocked: 'a,b' 목록)에는 놓지 못한다 — 놓으면 가구 위·벽 앞 공중에 떠 보인다
+export const cellFree = (g, a, b) => !(g.blocked || []).includes(`${a},${b}`);
+
 const canPlace = (state, id) => id === 'cat' || state.items[id]?.state === 'dry';
 const taken = (state, spot, except) => state.placed.some(p => p.itemId !== except && p.floor === spot.floor && p.a === spot.a && p.b === spot.b);
 

@@ -1,7 +1,7 @@
 // 꾸미기: 마른 소품과 고양이를 책방 바닥 칸에 끌어다 놓기·옮기기·되돌리기. 보관함으로 끌면 빼기.
 import {h, say, dragFrom, josa} from '../ui.js';
 import {ASSETS, REF_W, REF_H} from '../assets.js';
-import {cellAt, cellCenter, place, move, remove, undo} from '../iso.js';
+import {cellAt, cellCenter, cellFree, place, move, remove, undo} from '../iso.js';
 import {shopView} from './home.js';
 import {itemPic} from './wrap.js';
 import {lessonByItem} from '../../content/index.js';
@@ -17,6 +17,7 @@ export function mount(root, ctx){
     if (inTray(p)){ if (remove(S, id, history)) say('rupert_explain', `${josa(nameOf(id), '을', '를')} 보관함에 넣었어.`); render(); ctx.save(); return; }
     const r = toRef(p), c = cellAt(ASSETS.grid.g, r.x, r.y);
     if (!c){ say('rupert_think', '바닥 칸 안에 놓아 볼까?'); return; }
+    if (!cellFree(ASSETS.grid.g, c.a, c.b)){ say('rupert_think', '거기엔 가구가 있어. <b>빈 마루</b>에 놓아 볼까?'); return; }
     const ok = S.placed.some(q => q.itemId === id) ? move(S, id, {floor: 'g', ...c}, history) : place(S, {itemId: id, floor: 'g', ...c}, history);
     if (!ok) say('rupert_think', '거기엔 벌써 다른 게 있어. <b>옆 칸</b>은 어때?');
     render(); ctx.save();
@@ -26,10 +27,12 @@ export function mount(root, ctx){
     const shop = shopView(S, ctx.content, {w: BOX.w, h: BOX.h, defaultCat: false});
     Object.assign(shop.style, {left: BOX.x + 'px', top: BOX.y + 'px'});
     const g = ASSETS.grid.g, P = (a, b) => cellCenter(g, a - .5, b - .5);
-    let lines = '';
-    for (let i = 0; i <= g.N; i++){ const a = P(i, 0), b = P(i, g.N), c = P(0, i), d = P(g.N, i);
-      lines += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/><line x1="${c.x}" y1="${c.y}" x2="${d.x}" y2="${d.y}"/>`; }
-    shop.insertAdjacentHTML('beforeend', `<svg class="isogrid" viewBox="0 0 ${REF_W} ${REF_H}" aria-hidden="true"><g stroke="rgba(255,250,235,.95)" stroke-width="3.5" stroke-dasharray="12 8">${lines}</g></svg>`);
+    let lines = '';   // 놓을 수 있는 칸만 점선으로
+    for (let a = 0; a < g.N; a++) for (let b = 0; b < g.N; b++){
+      if (!cellFree(g, a, b)) continue;
+      const q = [P(a, b), P(a + 1, b), P(a + 1, b + 1), P(a, b + 1)];
+      lines += `<polygon points="${q.map(p => p.x + ',' + p.y).join(' ')}" fill="rgba(255,250,235,.16)" stroke="rgba(255,250,235,.95)" stroke-width="3" stroke-dasharray="10 7"/>`; }
+    shop.insertAdjacentHTML('beforeend', `<svg class="isogrid" viewBox="0 0 ${REF_W} ${REF_H}" aria-hidden="true"><g>${lines}</g></svg>`);
     shop.querySelector('.things').style.zIndex = 2;
     shop.querySelectorAll('.thing').forEach(t => t.addEventListener('pointerdown', e => dragFrom(e, () => t.cloneNode(true), p => drop(t.dataset.id, p))));
     const stock = [...Object.entries(S.items).filter(([id, i]) => i.state === 'dry' && !S.placed.some(p => p.itemId === id)).map(([id]) => id),
